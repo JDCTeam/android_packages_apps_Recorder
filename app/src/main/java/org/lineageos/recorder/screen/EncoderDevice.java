@@ -43,45 +43,17 @@ abstract class EncoderDevice {
 
     // Standard resolution tables, removed values that aren't multiples of 8
     private final int[][] validResolutions = {
-            // CEA Resolutions
-            {640, 480},
-            {720, 480},
-            {720, 576},
-            {1280, 720},
-            {1920, 1080},
-            // VESA Resolutions
-            {800, 600},
-            {1024, 768},
-            {1152, 864},
-            {1280, 768},
-            {1280, 800},
-            {1360, 768},
-            {1366, 768},
-            {1280, 1024},
-            //{ 1400, 1050 },
-            //{ 1440, 900 },
-            //{ 1600, 900 },
-            {1600, 1200},
-            //{ 1680, 1024 },
-            //{ 1680, 1050 },
-            {1920, 1200},
-            // HH Resolutions
-            {800, 480},
-            {854, 480},
-            {864, 480},
-            {640, 360},
-            //{ 960, 540 },
-            {848, 480}
+            {720, 1080}
     };
     private MediaCodec venc;
-    private int width;
-    private int height;
+    private int width=720;
+    private int height=1080;
     private VirtualDisplay virtualDisplay;
 
     EncoderDevice(Context context, int width, int height) {
         this.context = context;
-        this.width = width;
-        this.height = height;
+        this.width = 720;
+        this.height = 1080;
     }
 
     VirtualDisplay registerVirtualDisplay(Context context) {
@@ -91,7 +63,7 @@ abstract class EncoderDevice {
         if (surface == null || dm == null)
             return null;
         return virtualDisplay = dm.createVirtualDisplay(ScreencastService.SCREENCASTER_NAME,
-                width, height, 1,
+                720, 1080, 1,
                 surface, DisplayManager.VIRTUAL_DISPLAY_FLAG_PUBLIC |
                         DisplayManager.VIRTUAL_DISPLAY_FLAG_SECURE);
     }
@@ -145,8 +117,8 @@ abstract class EncoderDevice {
             venc = null;
         }
 
-        int maxWidth = 640;
-        int maxHeight = 480;
+        int maxWidth = 720;
+        int maxHeight = 1080;
         int bitrate = 2000000;
 
         for (VideoEncoderCap cap : videoEncoders) {
@@ -187,32 +159,6 @@ abstract class EncoderDevice {
             }
             if (height > max || width > min) {
                 resizeNeeded = true;
-            }
-        }
-
-        if (resizeNeeded) {
-            boolean matched = false;
-            for (int[] resolution : validResolutions) {
-                // All res are in landscape. Find the highest match
-                if (resolution[0] <= max && resolution[1] <= min &&
-                        (!matched || (resolution[0] > (landscape ? width : height)))) {
-                    if (((double) resolution[0] / (double) resolution[1]) == ratio) {
-                        // Got a valid one
-                        if (landscape) {
-                            width = resolution[0];
-                            height = resolution[1];
-                        } else {
-                            height = resolution[0];
-                            width = resolution[1];
-                        }
-                        matched = true;
-                    }
-                }
-            }
-            if (!matched) {
-                // No match found. Go for the lowest... :(
-                width = landscape ? 640 : 480;
-                height = landscape ? 480 : 640;
             }
         }
 
