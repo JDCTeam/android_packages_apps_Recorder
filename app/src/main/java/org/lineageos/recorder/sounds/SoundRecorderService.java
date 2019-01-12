@@ -30,8 +30,8 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -183,7 +183,6 @@ public class SoundRecorderService extends Service {
 
         if (mRecord != null) {
             mStatus = RecorderStatus.STOPPED;
-            mStatus = RecorderStatus.STOPPED;
             mRecord.stop();
             mRecord.release();
             mRecord = null;
@@ -302,7 +301,7 @@ public class SoundRecorderService extends Service {
                 .setContentText(getString(R.string.sound_notification_message,
                         DateUtils.formatElapsedTime(mElapsedTime / 1000)))
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_action_sound_record)
+                .setSmallIcon(R.drawable.ic_notification_sound)
                 .setContentIntent(pi)
                 .setColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
@@ -328,7 +327,7 @@ public class SoundRecorderService extends Service {
         Notification notification = new NotificationCompat.Builder(
                 this, SOUNDRECORDER_NOTIFICATION_CHANNEL)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_action_sound_record)
+                .setSmallIcon(R.drawable.ic_notification_sound)
                 .setContentTitle(getString(R.string.sound_notification_title))
                 .setContentText(getString(R.string.sound_notification_message,
                         DateUtils.formatElapsedTime(mElapsedTime / 1000)))
